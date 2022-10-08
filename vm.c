@@ -7,6 +7,7 @@
 // To execute: ./a.out input.txt -v
 // input.txt is any input test file
 // Tags: -v prints virtual machine trace, -l prints lexeme list, -s prints symbol table, -c prints assembly code
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -16,23 +17,19 @@ int base(int *stack, int BP, int L);
 void print_instruction(int PC, instruction IR);
 void print_stack(int PC, int BP, int SP, int *stack);
 
-// From the assignment:
-// "The P-machine is a stack machine with two memory areas:
-// 		the 'text' section which contains the instructions for the VM to execute,
-//		and the 'stack', which is organized as a data-stack to be used by the PM/0 CPU."
-
 // The instruction array code is the "text" section and contains all instructions to be executed.
-
-// Appendix B contains a lot of the info for implementing the execute function
+// trace_flag determines whether the current info will be printed
 void execute(int trace_flag, instruction *code)
 {
-	// TODO: Declare int array as the 'stack' section with ARRAY_SIZE and initialize values to 0
+	// The stack will store the data to be used by the PM/0 CPU.
 	int stack[ARRAY_SIZE];
-	for(int i = 0; i < ARRAY_SIZE; i++) {
+	int i;
+	for(i = 0; i < ARRAY_SIZE; i++) 
+	{
 		stack[i] = 0;
 	}
-	// TODO: Declare five registers to handle the stack and text segments
-	//	BP, SP, PC, halt are ints, IR is an instruction
+	// Five registers handle the stack and text segments
+	// BP, SP, PC, halt are ints, IR is an instruction
 	int BP = 0, SP = -1, PC = 0, halt = 0;
 	instruction IR;
 
@@ -54,15 +51,16 @@ void execute(int trace_flag, instruction *code)
 		}
 
 		// Step 2: Execute cycle
-		// WRITE SWITCH CASE FOR OPS IN APPENDIX B HERE
 		switch (IR.op)
 		{
+			// Cases 1, 3-6 by Jarod
 			// Case 1: Pushes a constant value (literal) M onto the stack 
 			case LIT:
 				SP++;
 				stack[SP] = IR.m;
 				break;
-			//Case 2: Operations that perform on data from the top of the stack
+			// Case 2 by Josh
+			// Case 2: Operations that perform on data from the top of the stack
 			case OPR:
 				switch(IR.m){
 					case ADD:
@@ -131,7 +129,7 @@ void execute(int trace_flag, instruction *code)
 				BP = stack[SP + 2];
 				PC = stack[SP + 3];
 				break;
-			// Cases 7-10 by nick
+			// Cases 7-10 by Nick
 			// Case 7: Allocate M memory words in the stack, and increase SP respectively.
 			case INC:
 				SP = SP + IR.m;
@@ -175,13 +173,7 @@ void execute(int trace_flag, instruction *code)
 		{
 			print_stack(PC, BP, SP, stack);
 		}
-	}
-	// From a message in #cop3402_aedo:
-	// trace_flag only determines whether the info is printed, and is separate from halt
-
-	
-
-	
+	}	
 }
 
 int base(int *stack, int BP, int L)
