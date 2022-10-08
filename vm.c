@@ -115,6 +115,7 @@ void execute(int trace_flag, instruction *code)
 			// Case 4: Store value at top of stack in the stack location at offset M from L lexicographical levels down 
 			case STO:
 				stack[base(stack, BP, IR.l) + IR.m] = stack[SP];
+				SP--;
 				break;
 			// Case 5: Call procedure at code index M (generates new Activation Record and PC ! M) 
 			case CAL:
