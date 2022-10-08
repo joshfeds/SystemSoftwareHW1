@@ -26,8 +26,11 @@ void print_stack(int PC, int BP, int SP, int *stack);
 // Appendix B contains a lot of the info for implementing the execute function
 void execute(int trace_flag, instruction *code)
 {
-	// TODO: Declare int array as the 'stack' section with ARRAY_SIZE
+	// TODO: Declare int array as the 'stack' section with ARRAY_SIZE and initialize values to 0
 	int stack[ARRAY_SIZE];
+	for(int i = 0; i < ARRAY_SIZE; i++) {
+		stack[i] = 0;
+	}
 	// TODO: Declare five registers to handle the stack and text segments
 	//	BP, SP, PC, halt are ints, IR is an instruction
 	int BP = 0, SP = -1, PC = 0, halt = 0;
@@ -39,6 +42,16 @@ void execute(int trace_flag, instruction *code)
 		// Step 1: Fetch cycle
 		IR = code[PC];
 		PC++;
+
+		// Step 1.5: Prints instruction first as outlined in Appendix D
+		if(trace_flag) {
+			if(PC == 1) {
+				printf("VM Exectution:\n");
+				printf("\t\t\t\tPC\tBP\tSP\tstack\n");
+				printf("Initial Values:\t\t\t0\t0\t-1\n");
+			}
+			print_instruction(PC, IR);
+		}
 
 		// Step 2: Execute cycle
 		// WRITE SWITCH CASE FOR OPS IN APPENDIX B HERE
@@ -159,9 +172,7 @@ void execute(int trace_flag, instruction *code)
 		// Step 3: Print the current step
 		if (trace_flag)
 		{
-			printf("VM Exectution:\n");
-			printf("\t\t\t\tPC\tBP\tSP\tstack\n");
-			printf("Initial Values:\t\t\t0\t0\t-1\n");
+			print_stack(PC, BP, SP, stack);
 		}
 	}
 	// From a message in #cop3402_aedo:
