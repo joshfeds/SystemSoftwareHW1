@@ -49,8 +49,50 @@ void execute(int trace_flag, instruction *code)
 				SP++;
 				stack[SP] = IR.m;
 				break;
-			// Case 2:
+			//Case 2: Operations that perform on data from the top of the stack
 			case OPR:
+				switch(IR.m){
+					case ADD:
+						SP--;
+						stack[SP] += stack[SP + 1];
+						break;
+					case SUB:
+						SP--;
+						stack[SP] -= stack[SP + 1];
+						break;
+					case MUL:
+						SP--;
+						stack[SP] *= stack[SP + 1];
+						break;
+					case DIV:
+						SP--;
+						stack[SP] /= stack[SP + 1];
+						break;
+					case EQL:
+						SP--;
+						stack[SP] = stack[SP] == stack[SP + 1];
+						break;
+					case NEQ:
+						SP--;
+						stack[SP] = stack[SP] != stack[SP + 1];
+						break;
+					case LSS:
+						SP--;
+						stack[SP] = stack[SP] < stack[SP + 1];
+						break;
+					case LEQ:
+						SP--;
+						stack[SP] = stack[SP] <= stack[SP + 1];
+						break;
+					case GTR:
+						SP--;
+						stack[SP] = stack[SP] > stack[SP + 1];
+						break;
+					default:
+						SP--;
+						stack[SP] = stack[SP] >= stack[SP + 1];
+						break;	 
+				}
 				break;
 			// Case 3: Load value to top of stack from the stack location at offset M from L lexicographical levels down 
 			case LOD:
