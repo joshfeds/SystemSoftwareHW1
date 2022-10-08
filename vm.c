@@ -44,6 +44,37 @@ void execute(int trace_flag, instruction *code)
 		// WRITE SWITCH CASE FOR OPS IN APPENDIX B HERE
 		switch (IR.op)
 		{
+			// Case 1: Pushes a constant value (literal) M onto the stack 
+			case LIT:
+				SP++;
+				stack[SP] = IR.m;
+				break;
+			// Case 2:
+			case OPR:
+				break;
+			// Case 3: Load value to top of stack from the stack location at offset M from L lexicographical levels down 
+			case LOD:
+				SP++;
+				stack[SP] = stack[base(stack, BP, IR.l) + IR.m];
+				break;
+			// Case 4: Store value at top of stack in the stack location at offset M from L lexicographical levels down 
+			case STO:
+				stack[base(stack, BP, IR.l) + IR.m] = stack[SP];
+				break;
+			// Case 5: Call procedure at code index M (generates new Activation Record and PC ! M) 
+			case CAL:
+				stack[SP + 1] = base(stack, BP, IR.l);
+				stack[SP + 2] = BP;
+				stack[SP + 3] = PC;
+				BP = SP + 1;
+				PC = IR.m;
+				break;
+			// Case 6: Return from the current procedure. Restores the environment using information from the activation record.
+			case RTN:
+				SP = BP - 1;
+				BP = stack[SP + 2];
+				PC = stack[SP + 3];
+				break;
 			// Cases 7-10 by nick
 			// Case 7: Allocate M memory words in the stack, and increase SP respectively.
 			case INC:
