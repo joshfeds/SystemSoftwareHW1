@@ -24,16 +24,16 @@ void execute(int trace_flag, instruction *code)
 	// The stack will store the data to be used by the PM/0 CPU.
 	int stack[ARRAY_SIZE];
 	int i;
-	for(i = 0; i < ARRAY_SIZE; i++) 
+	// Memory must be initialized before use
+	for (i = 0; i < ARRAY_SIZE; i++) 
 	{
 		stack[i] = 0;
 	}
 	// Five registers handle the stack and text segments
-	// BP, SP, PC, halt are ints, IR is an instruction
 	int BP = 0, SP = -1, PC = 0, halt = 0;
 	instruction IR;
 
-	// P-Machine loops while halt is false
+	// P-Machine loops while a halt instruction hasn't been received
 	while (halt == 0)
 	{
 		// Step 1: Fetch cycle
@@ -41,8 +41,10 @@ void execute(int trace_flag, instruction *code)
 		PC++;
 
 		// Step 1.5: Prints instruction first as outlined in Appendix D
-		if(trace_flag) {
-			if(PC == 1) {
+		if (trace_flag)
+		{
+			if (PC == 1)
+			{
 				printf("VM Exectution:\n");
 				printf("\t\t\t\tPC\tBP\tSP\tstack\n");
 				printf("Initial Values:\t\t\t0\t0\t-1\n");
@@ -62,7 +64,8 @@ void execute(int trace_flag, instruction *code)
 			// Case 2 by Josh
 			// Case 2: Operations that perform on data from the top of the stack
 			case OPR:
-				switch(IR.m){
+				switch (IR.m)
+				{
 					case ADD:
 						SP--;
 						stack[SP] += stack[SP + 1];
@@ -142,7 +145,7 @@ void execute(int trace_flag, instruction *code)
 			case JPC:
 				if (stack[SP] == 0)
 					PC = IR.m;
-				SP = SP - 1;
+				SP--;
 				break;
 			// Case 10: Perform a system operation.
 			case SYS:
@@ -152,11 +155,11 @@ void execute(int trace_flag, instruction *code)
 					case WRT:
 						printf("\nOutput : %d", stack[SP]);
 						printf("\n\t\t\t\t");
-						SP = SP - 1;
+						SP--;
 						break;
 					// Read input from the console.
 					case RED:
-						SP = SP + 1;
+						SP++;
 						printf("\nInput : ");
 						scanf("%d", &stack[SP]);
 						printf("\t\t\t\t");
